@@ -7,9 +7,9 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 train_dir = 'C:\\Users\\HP\\PycharmProjects\pythonProject\\train'
 val_dir = 'C:\\Users\\HP\\PycharmProjects\pythonProject\\val'
 
-batch_size = 32
-img_height = 224
-img_width = 224
+batch_size = 5
+img_height = 150
+img_width = 150
 
 train_datagen = ImageDataGenerator(
     rescale=1. / 255,
@@ -46,30 +46,30 @@ from tensorflow.keras.applications import *
 vgg16.trainable = False
 model = tf.keras.Sequential([
     layers.Conv2D(64, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
-    layers.Conv2D(64, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
     layers.BatchNormalization(),
 
-    layers.Conv2D(128, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
-    layers.Conv2D(128, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
+    layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.Conv2D(128, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
 
-    layers.Conv2D(256, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
-    layers.Conv2D(256, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
+    layers.Conv2D(256, (3, 3), activation='relu'),
+    layers.Conv2D(256, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
     layers.Dropout(0.2),
 
-    layers.Conv2D(512, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
-    layers.Conv2D(512, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
+    layers.Conv2D(512, (3, 3), activation='relu'),
+    layers.Conv2D(512, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
     layers.BatchNormalization(),
 
     layers.Flatten(),
-    layers.Dense(1024, activation='relu'),
+    layers.Dense(512, activation='relu'),
     layers.Dropout(0.5),
     layers.Dense(512, activation='relu'),
     layers.Dropout(0.5),
-    layers.Dense(256, activation='relu'),
+    layers.Dense(512, activation='relu'),
     layers.Dense(6, activation='softmax'),
 ])
 
