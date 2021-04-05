@@ -1,81 +1,80 @@
 import tensorflow as tf
-import matplotlib.pyplot as plt
-import pathlib
-import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-train_dir = 'C:\\Users\\HP\\PycharmProjects\pythonProject\\train'
-val_dir = 'C:\\Users\\HP\\PycharmProjects\pythonProject\\val'
+train_dir = 'C:\\Users\\HP\\PycharmProjects\\pythonProject\\train'
+val_dir = 'C:\\Users\\HP\\PycharmProjects\\pythonProject\\val'
 
-batch_size = 5
+batch_size = 30
 img_height = 150
 img_width = 150
 
-train_datagen = ImageDataGenerator(
+train_da = ImageDataGenerator(
     rescale=1. / 255,
-    rotation_range=40,
+    rotation_range=70,
     width_shift_range=0.2,
     height_shift_range=0.2,
     shear_range=0.2,
     zoom_range=0.2,
     horizontal_flip=True,
+    fill_mode='constant',
+    zca_epsilon=True,
+
 
 )
 
-train_ds = train_datagen.flow_from_directory(
+train_ds = train_da.flow_from_directory(
     train_dir,
-    subset='training',
+    #subset='training',
     target_size=(img_height, img_width),
+    class_mode='categorical',
     batch_size=batch_size
 )
 
-val_datagen = ImageDataGenerator(rescale=1. / 255)
+val_da = ImageDataGenerator(rescale=1. / 255)
 
-val_ds = train_datagen.flow_from_directory(
+val_ds = val_da.flow_from_directory(
     val_dir,
-    subset='validation',
+    #subset='validation',
     target_size=(img_height, img_width),
+    class_mode='categorical',
     batch_size=batch_size
 )
 
 from tensorflow.keras import layers
-from tensorflow.keras.layers import Conv2D, MaxPool2D, Dense, Flatten, BatchNormalization, Activation
-from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.applications import *
 
 vgg16.trainable = False
 model = tf.keras.Sequential([
-    layers.Conv2D(64, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
-    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Conv2D(64, (3, 3), activation='gelu',input_shape=(img_height, img_width, 3), kernel_initializer='glorot_uniform'),
+    layers.Conv2D(64, (3, 3), activation='gelu'),
     layers.MaxPooling2D((2, 2)),
     layers.BatchNormalization(),
 
-    layers.Conv2D(128, (3, 3), activation='relu'),
-    layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.Conv2D(128, (3, 3), activation='gelu'),
+    layers.Conv2D(128, (3, 3), activation='gelu'),
     layers.MaxPooling2D((2, 2)),
 
-    layers.Conv2D(256, (3, 3), activation='relu'),
-    layers.Conv2D(256, (3, 3), activation='relu'),
+    layers.Conv2D(256, (3, 3), activation='gelu'),
+    layers.Conv2D(256, (3, 3), activation='gelu'),
     layers.MaxPooling2D((2, 2)),
-    layers.Dropout(0.2),
 
-    layers.Conv2D(512, (3, 3), activation='relu'),
-    layers.Conv2D(512, (3, 3), activation='relu'),
+    layers.Conv2D(512, (3, 3), activation='gelu'),
+    layers.Conv2D(512, (3, 3), activation='gelu'),
     layers.MaxPooling2D((2, 2)),
     layers.BatchNormalization(),
 
     layers.Flatten(),
-    layers.Dense(512, activation='relu'),
+    layers.Dense(512, activation='gelu'),
     layers.Dropout(0.5),
-    layers.Dense(512, activation='relu'),
+    layers.Dense(512, activation='gelu'),
     layers.Dropout(0.5),
-    layers.Dense(512, activation='relu'),
+    layers.Dense(512, activation='gelu'),
     layers.Dense(6, activation='softmax'),
 ])
 
 model.compile(
     optimizer='adam',
-    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss='categorical_crossentropy',
     metrics=['accuracy']
 )
 
